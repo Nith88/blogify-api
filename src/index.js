@@ -14,6 +14,13 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Blogify API!');
 });
 
+// Add this new route
+app.get('/api/v1/posts', (req, res) => {
+  // For now, we'll just send a confirmation message.
+  // In a future module, this will fetch posts from a database.
+  res.send('Fetching all blog posts...');
+});
+
 // 5. Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

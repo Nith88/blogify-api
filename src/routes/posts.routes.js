@@ -11,3 +11,6 @@ res.send('Fetching all blog posts from the modular router!');
 router.post('/', (req, res) => {
 res.send('Creating a new blog post...');
 });
+
+// Export the router
+module.exports = router;

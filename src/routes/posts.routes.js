@@ -8,6 +8,7 @@ const postController = require('../controllers/posts.controller.js');
 // 2. Use the controller function as the route handler
 // The router's job is now just to connect the path '/' to the 'getAllPosts' function.
 router.get('/', postController.getAllPosts);
+router.get('/:postId', postController.getPostById);
 
 // We can remove the old inline function entirely!
 // router.get('/', (req, res) => { ... }); // This is now gone

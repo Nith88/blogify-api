@@ -16,7 +16,22 @@ res.status(200).json({
 });
 };
 
+const getPostById = async (req, res) => {
+  try {
+    const postId = req.params.postId;
+
+    res.json({
+      message: "Fetching data for post with ID: " + postId
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching post",
+      error: error.message
+    });
+  }
+};
+
 // We export the function in an object so we can easily add more functions later.
 module.exports = {
-getAllPosts,
+getAllPosts, getPostById
 };

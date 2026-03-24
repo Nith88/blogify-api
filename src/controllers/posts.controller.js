@@ -30,8 +30,38 @@ const getPostById = async (req, res) => {
     });
   }
 };
+// ✅ CREATE new post (POST)
+const createPost = (req, res) => {
+  try {
+    const { title } = req.body;
 
+    // Basic validation
+    if (!title) {
+      return res.status(400).json({
+        message: 'Title is required'
+      });
+    }
+
+    const newPost = {
+      id: posts.length + 1,
+      title
+    };
+
+    posts.push(newPost);
+
+    res.status(201).json({
+      message: 'Post created successfully',
+      data: newPost
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error creating post',
+      error: error.message
+    });
+  }
+};
 // We export the function in an object so we can easily add more functions later.
 module.exports = {
-getAllPosts, getPostById
+getAllPosts, getPostById, createPost
 };

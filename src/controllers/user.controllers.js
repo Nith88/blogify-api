@@ -13,5 +13,5 @@ res.status(200).json({
 
 
 module.exports = {
-getSingleUser,getPostById
+getSingleUser
 };

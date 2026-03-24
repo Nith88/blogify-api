@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
+//Adding middleware for JSON Parsing
+
+app.use(express.json());
+
 // 1. Import our new post router
 const postRouter = require('./routes/posts.routes.js');
 const usersRoutes = require('./routes/user.routes.js');

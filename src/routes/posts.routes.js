@@ -10,6 +10,9 @@ const postController = require('../controllers/posts.controller.js');
 router.get('/', postController.getAllPosts);
 router.get('/:postId', postController.getPostById);
 
+// ✅ POST route
+router.post('/', postController.createPost);
+
 // We can remove the old inline function entirely!
 // router.get('/', (req, res) => { ... }); // This is now gone
 

@@ -1,43 +1,59 @@
 // src/controllers/posts.controller.js
 
-// This function will be our handler for "GET /api/v1/posts"
-const getAllPosts = (req, res) => {
-// For now, the "business logic" is simple.
-// In the future, this is where we would call a service to get data from a database.
-const posts = [
+// In-memory data store (shared across functions)
+let posts = [
   { id: 1, title: 'Controller Post 1' },
   { id: 2, title: 'Controller Post 2' }
 ];
 
-// The controller's job is to send the final response.
-res.status(200).json({
-  message: 'Posts fetched successfully',
-  data: posts
-});
+// GET /api/v1/posts
+const getAllPosts = (req, res) => {
+  res.status(200).json({
+    success: true,
+    data: {
+      posts: posts
+    }
+  });
 };
 
-const getPostById = async (req, res) => {
+// GET /api/v1/posts/:postId
+const getPostById = (req, res) => {
   try {
-    const postId = req.params.postId;
+    const postId = parseInt(req.params.postId);
 
-    res.json({
-      message: "Fetching data for post with ID: " + postId
+    const post = posts.find(p => p.id === postId);
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: `Post with ID ${postId} not found`
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        post: post
+      }
     });
+
   } catch (error) {
     res.status(500).json({
-      message: "Error fetching post",
+      success: false,
+      message: 'Error fetching post',
       error: error.message
     });
   }
 };
-// ✅ CREATE new post (POST)
+
+// POST /api/v1/posts
 const createPost = (req, res) => {
   try {
     const { title } = req.body;
 
-    // Basic validation
     if (!title) {
       return res.status(400).json({
+        success: false,
         message: 'Title is required'
       });
     }
@@ -50,18 +66,23 @@ const createPost = (req, res) => {
     posts.push(newPost);
 
     res.status(201).json({
-      message: 'Post created successfully',
-      data: newPost
+      success: true,
+      data: {
+        post: newPost
+      }
     });
 
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: 'Error creating post',
       error: error.message
     });
   }
 };
-// We export the function in an object so we can easily add more functions later.
+
 module.exports = {
-getAllPosts, getPostById, createPost
+  getAllPosts,
+  getPostById,
+  createPost
 };

@@ -2,10 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
+
+// Controller import (FIXED)
 const userController = require('../controllers/user.controllers.js');
 
-// Connect the route to the controller.
-router.get('/:userId', userController.getSingleUser);
+// Routes
 
+// GET single user by ID
+router.get('/:userId', userController.getSingleUser);
 
 module.exports = router;

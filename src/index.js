@@ -1,26 +1,33 @@
+// src/index.js
+
 const express = require('express');
+const cors = require('cors');
+
 const app = express();
 const PORT = 3000;
 
-//Adding middleware for JSON Parsing
+// Import main router
+const mainRouter = require('./routes');
 
+// Import error handler
+const errorHandler = require('./middleware/errorHandler');
+
+// Global Middleware
+app.use(cors());
 app.use(express.json());
 
-// 1. Import our new post router
-const postRouter = require('./routes/posts.routes.js');
-const usersRoutes = require('./routes/user.routes.js');
-
-// Main welcome route
+// Optional root route (allowed)
 app.get('/', (req, res) => {
-res.send('Welcome to the Blogify API!');
+  res.send('Welcome to the Blogify API!');
 });
 
-// 2. Mount the router
-// This tells Express: "For any request that starts with /api/v1/posts,
-// hand it over to the postRouter to handle."
-app.use('/api/v1/posts', postRouter);
-app.use('/api/v1/users', usersRoutes);
+// ✅ SINGLE entry point for all routes
+app.use('/api/v1', mainRouter);
 
+// ✅ Error handling (must be last)
+app.use(errorHandler);
+
+// Start server
 app.listen(PORT, () => {
-console.log(`Server is running at http://localhost:${PORT}/`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });

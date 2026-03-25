@@ -1,6 +1,6 @@
 // src/controllers/posts.controller.js
 
-// In-memory data store (shared across functions)
+// In-memory data store
 let posts = [
   { id: 1, title: 'Controller Post 1' },
   { id: 2, title: 'Controller Post 2' }
@@ -11,74 +11,57 @@ const getAllPosts = (req, res) => {
   res.status(200).json({
     success: true,
     data: {
-      posts: posts
-    }
+      posts
+    },
+    error: null
   });
 };
 
 // GET /api/v1/posts/:postId
-const getPostById = (req, res) => {
-  try {
-    const postId = parseInt(req.params.postId);
+const getPostById = (req, res, next) => {
+  const postId = parseInt(req.params.postId);
 
-    const post = posts.find(p => p.id === postId);
+  const post = posts.find(p => p.id === postId);
 
-    if (!post) {
-      return res.status(404).json({
-        success: false,
-        message: `Post with ID ${postId} not found`
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: {
-        post: post
-      }
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error fetching post',
-      error: error.message
-    });
+  if (!post) {
+    const error = new Error(`Post with ID ${postId} not found`);
+    error.statusCode = 404;
+    return next(error);
   }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      post
+    },
+    error: null
+  });
 };
 
 // POST /api/v1/posts
-const createPost = (req, res) => {
-  try {
-    const { title } = req.body;
+const createPost = (req, res, next) => {
+  const { title } = req.body;
 
-    if (!title) {
-      return res.status(400).json({
-        success: false,
-        message: 'Title is required'
-      });
-    }
-
-    const newPost = {
-      id: posts.length + 1,
-      title
-    };
-
-    posts.push(newPost);
-
-    res.status(201).json({
-      success: true,
-      data: {
-        post: newPost
-      }
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error creating post',
-      error: error.message
-    });
+  if (!title) {
+    const error = new Error('Title is required');
+    error.statusCode = 400;
+    return next(error);
   }
+
+  const newPost = {
+    id: posts.length + 1,
+    title
+  };
+
+  posts.push(newPost);
+
+  res.status(201).json({
+    success: true,
+    data: {
+      post: newPost
+    },
+    error: null
+  });
 };
 
 module.exports = {

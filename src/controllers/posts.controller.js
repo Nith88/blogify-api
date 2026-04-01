@@ -21,24 +21,34 @@ const getAllPosts = async (req, res, next) => {
 };
 
 // GET /api/v1/posts/:postId
-const getPostById = (req, res, next) => {
-  const postId = parseInt(req.params.postId);
+const getPostById = async (req, res, next) => {
+  try {
+    // 1. Get the ID from the URL parameters.
+    const postId = req.params.postId;
 
-  const post = posts.find(p => p.id === postId);
+    // 2. Use the Post model's findById() method.
+    const post = await Post.findById(postId);
 
-  if (!post) {
-    const error = new Error(`Post with ID ${postId} not found`);
-    error.statusCode = 404;
-    return next(error);
+    // 3. CRITICAL: Check if the post was found.
+    if (!post) {
+      // If post is null, it means no document with that ID was found.
+      // Send a 404 Not Found response and stop execution.
+      return res.status(404).json({
+        success: false,
+        error: { message: `Post with ID ${postId} not found` }
+      });
+    }
+
+    // 4. If the post was found, send a 200 OK response with the document.
+    res.status(200).json({
+      success: true,
+      data: post
+    });
+
+  } catch (error) {
+    // This will catch other errors, like an invalid ID format.
+    next(error);
   }
-
-  res.status(200).json({
-    success: true,
-    data: {
-      post
-    },
-    error: null
-  });
 };
 
 // POST /api/v1/posts

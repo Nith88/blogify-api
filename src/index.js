@@ -1,10 +1,17 @@
 // src/index.js
+// Make sure dotenv is configured at the very top
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
 
+const connectDB = require('./config/db.js'); // 1. Import the connection function
+// 2. Call the connection function to establish a connection
+connectDB();
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 
 // Import main router
 const mainRouter = require('./routes');

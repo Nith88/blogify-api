@@ -72,8 +72,70 @@ const createPost = async (req, res, next) => {
   }
 };
 
+//PATCH /api/v1/posts/:postId
+const updatePost = async (req, res, next) => {
+  try {
+    const postId = req.params.postId;
+    const updateData = req.body;
+
+    // Find the post by its ID and update it with the new data.
+    // { new: true } ensures that the updated document is returned.
+    const updatedPost = await Post.findByIdAndUpdate(postId, updateData, {
+      new: true,
+      runValidators: true // This is a good option to ensure the update follows your schema rules
+    });
+
+    // CRITICAL: Handle the "Not Found" case.
+    // If no document with that ID exists, findByIdAndUpdate returns null.
+    if (!updatedPost) {
+      return res.status(404).json({
+        success: false,
+        error: { message: `Post with ID ${postId} not found` }
+      });
+    }
+
+    // If successful, send back the updated post.
+    res.status(200).json({
+      success: true,
+      data: updatedPost
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+//DELETE /api/v1/posts/:postId
+const deletePost = async (req, res, next) => {
+  try {
+    const postId = req.params.postId;
+
+    const deletedPost = await Post.findByIdAndDelete(postId);
+
+    // CRITICAL: Handle the "Not Found" case.
+    if (!deletedPost) {
+      return res.status(404).json({
+        success: false,
+        error: { message: `Post with ID ${postId} not found` }
+      });
+    }
+
+    // If successful, a common practice is to send back a confirmation message
+    // or simply a 204 No Content status.
+    res.status(200).json({
+      success: true,
+      data: { message: 'Post deleted successfully.' }
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPosts,
   getPostById,
-  createPost
+  createPost,
+  updatePost,
+  deletePost
 };
